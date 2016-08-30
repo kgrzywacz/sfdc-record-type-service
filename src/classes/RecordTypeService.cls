@@ -2,14 +2,25 @@ global class RecordTypeService {
 	private static Map<String, Map<String, Map<String, Id>>> mainMap;
 
 	global static Id getRecordTypeIdByDeveloperName(String sObjectType, String recordTypeDeveloperName){
-		if(String.isBlank(sObjectType)){
-			throw new RecordTypeServiceException('sObjectType parameter of the method cannot be blank');
-		}
-		return getMainMap().get(sObjectType.toLowerCase()).get('developerName').get(recordTypeDeveloperName.toLowerCase());
+		return getRecordTypeId(sObjectType, 'DeveloperName', recordTypeDeveloperName);
 	}
 
 	global static Id getRecordTypeIdByName(String sObjectType, String recordTypeName){
-		return getMainMap().get(sObjectType.toLowerCase()).get('name').get(recordTypeName.toLowerCase());
+		return getRecordTypeId(sObjectType, 'Name', recordTypeName);
+	}
+
+	private static Id getRecordTypeId(String sObjectType, String fieldName, String fieldValue) {
+		if(String.isBlank(sObjectType)){
+			throw new RecordTypeServiceException('sObjectType parameter of the method cannot be blank');
+		}
+		If(!getMainMap().containsKey(sObjectType.toLowerCase())){
+			throw new RecordTypeServiceException('There is no sObject with Name \'' + sObjectType + '\'');
+		}
+		Id returnValue = getMainMap().get(sObjectType.toLowerCase()).get(fieldName.toLowerCase()).get(fieldValue.toLowerCase());
+		if(String.isBlank(returnValue)){
+			throw new RecordTypeServiceException('sObject ' + sObjectType + ' doesn\'t have a record type with ' + fieldName + ' \''+ fieldValue+'\'');
+		}
+		return returnValue;
 	}
 
 	private static Map<String, Map<String, Map<String, Id>>> getMainMap() {
@@ -31,6 +42,9 @@ global class RecordTypeService {
 	}
 
 	private static List<RecordType> getRecordTypes(){
+		if(!(Limits.getQueries() < Limits.getLimitQueries())){
+			throw new RecordTypeServiceException('Calling this service would cause \'Too many SOQL queries\' exception. Service unavailable');
+		}
 		return [SELECT Id, Name, DeveloperName, sObjectType FROM RecordType];
 	}
 
@@ -42,13 +56,13 @@ global class RecordTypeService {
 	}
 
 	private static void fillMapForSObjectType(RecordType rtObject, Map<String,Map<String, Id>> rtObjectSpecificMap) {
-		if(!rtObjectSpecificMap.containsKey('developerName')){
-			rtObjectSpecificMap.put('developerName', new Map<String, Id>());
+		if(!rtObjectSpecificMap.containsKey('developername')){
+			rtObjectSpecificMap.put('developername', new Map<String, Id>());
 		}
 		if(!rtObjectSpecificMap.containsKey('name')){
 			rtObjectSpecificMap.put('name', new Map<String, Id>());
 		}
-		rtObjectSpecificMap.get('developerName').put(rtObject.DeveloperName.toLowerCase(), rtObject.Id);
+		rtObjectSpecificMap.get('developername').put(rtObject.DeveloperName.toLowerCase(), rtObject.Id);
 		rtObjectSpecificMap.get('name').put(rtObject.Name.toLowerCase(), rtObject.Id);
 	}
 

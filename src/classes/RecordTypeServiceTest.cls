@@ -33,8 +33,8 @@
 			excMsg2 = e.getMessage();
 		}
 		Test.stopTest();
-		System.assertEquals('sObjectType parameter of the method cannot be blank', excMsg1);
-		System.assertEquals('sObjectType parameter of the method cannot be blank', excMsg2);
+		System.assertEquals('sObjectType and recordTypeName parameters cannot be blank', excMsg1);
+		System.assertEquals('sObjectType and recordTypeDeveloperName parameters cannot be blank', excMsg2);
 	}
 
 	@isTest static void exceptionNoSObject(){
@@ -53,6 +53,24 @@
 		Test.stopTest();
 		System.assertEquals('There is no sObject with Name \'A test name\'', excMsg1);
 		System.assertEquals('There is no sObject with Name \'A_test_name\'', excMsg2);
+	}
+
+	@isTest static void exceptionBlankRecordType(){
+		String excMsg1, excMsg2;
+		Test.startTest();
+		try{
+			RecordTypeService.getRecordTypeIdByName('Opportunity', '');
+		} catch (Exception e) {
+			excMsg1 = e.getMessage();
+		}
+		try{
+			RecordTypeService.getRecordTypeIdByDeveloperName('Opportunity', null);
+		} catch (Exception e) {
+			excMsg2 = e.getMessage();
+		}
+		Test.stopTest();
+		System.assertEquals('sObjectType and recordTypeName parameters cannot be blank', excMsg1);
+		System.assertEquals('sObjectType and recordTypeDeveloperName parameters cannot be blank', excMsg2);
 	}
 
 	@isTest static void exceptionNoRecordType(){

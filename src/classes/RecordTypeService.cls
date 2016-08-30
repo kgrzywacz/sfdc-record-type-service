@@ -10,8 +10,8 @@ global class RecordTypeService {
 	}
 
 	private static Id getRecordTypeId(String sObjectType, String fieldName, String fieldValue) {
-		if(String.isBlank(sObjectType)){
-			throw new RecordTypeServiceException('sObjectType parameter of the method cannot be blank');
+		if(String.isBlank(sObjectType) || String.isBlank(fieldValue)){
+			throw new RecordTypeServiceException('sObjectType and recordType' + fieldName + ' parameters cannot be blank');
 		}
 		If(!getMainMap().containsKey(sObjectType.toLowerCase())){
 			throw new RecordTypeServiceException('There is no sObject with Name \'' + sObjectType + '\'');

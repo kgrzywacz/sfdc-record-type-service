@@ -13,7 +13,7 @@ global class RecordTypeService {
 		if(String.isBlank(sObjectType) || String.isBlank(fieldValue)){
 			throw new RecordTypeServiceException('sObjectType and recordType' + fieldName + ' parameters cannot be blank');
 		}
-		If(!getMainMap().containsKey(sObjectType.toLowerCase())){
+		if(!getMainMap().containsKey(sObjectType.toLowerCase())){
 			throw new RecordTypeServiceException('There is no sObject with Name \'' + sObjectType + '\'');
 		}
 		Id returnValue = getMainMap().get(sObjectType.toLowerCase()).get(fieldName.toLowerCase()).get(fieldValue.toLowerCase());
